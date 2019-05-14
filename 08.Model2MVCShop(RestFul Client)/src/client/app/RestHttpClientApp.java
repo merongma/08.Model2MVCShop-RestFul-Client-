@@ -20,6 +20,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
+import com.model2.mvc.service.domain.Product;
 import com.model2.mvc.service.domain.User;
 
 public class RestHttpClientApp {
@@ -27,70 +28,62 @@ public class RestHttpClientApp {
 	// main Method
 	public static void main(String[] args) throws Exception {
 
-		////////////////////////////////////////////////////////////////////////////////////////////
-		// 주석을 하나씩 처리해가며 실습
-		////////////////////////////////////////////////////////////////////////////////////////////
-
-		// System.out.println("\n====================================\n");
-		// // 1.1 Http Get 방식 Request : JsonSimple lib 사용
+		// GET JSONSIMPLE
 		// RestHttpClientApp.getUserTest_JsonSimple();
 
-		// System.out.println("\n====================================\n");
-		// // 1.2 Http Get 방식 Request : CodeHaus lib 사용
+		// GET CODEHAUS
 		// RestHttpClientApp.getUserTest_Codehaus();
 
-		// System.out.println("\n====================================\n");
-		// // 2.1 Http Post 방식 Request : JsonSimple lib 사용
+		// POST JSONSIMPLE
 		// RestHttpClientApp.LoginTest_JsonSimple();
-		//
-		// System.out.println("\n====================================\n");
-		// // 1.2 Http Post 방식 Request : CodeHaus lib 사용
+
+		// POST CODEHAUS
 		// RestHttpClientApp.LoginTest_Codehaus();
 
-		// System.out.println("\n====================================\n");
-		// // 2.1 Http Post 방식 Request : JsonSimple lib 사용
+		// POST JSONSIMPLE
 		// RestHttpClientApp.addUserTest_JsonSimple();
-		//
-		// System.out.println("\n====================================\n");
-		// // 1.2 Http Post 방식 Request : CodeHaus lib 사용
+
+		// POST CODEHAUS
 		// RestHttpClientApp.addUserTest_Codehaus();
 
-		// System.out.println("\n====================================\n");
-		// // 2.1 Http Post 방식 Request : JsonSimple lib 사용
+		// POST JSONSIMPLE
 		// RestHttpClientApp.updateUserTest_JsonSimple();
 
-		// System.out.println("\n====================================\n");
-		// // 1.2 Http Post 방식 Request : CodeHaus lib 사용
+		// POST CODEHAUS
 		// RestHttpClientApp.updateUserTest_Codehaus();
 
-		// System.out.println("\n====================================\n");
-		// // 2.1 Http Post 방식 Request : JsonSimple lib 사용
+		// POST JSONSIMPLE
 		// RestHttpClientApp.checkDuplicationtTest_JsonSimple();
 
-		// System.out.println("\n====================================\n");
-		// // 1.2 Http Post 방식 Request : CodeHaus lib 사용
+		// POST CODEHAUS
 		// RestHttpClientApp.checkDuplicationtTest_Codehaus();
 
-		// System.out.println("\n====================================\n");
-		// // 2.1 Http Post 방식 Request : JsonSimple lib 사용
+		// GET JSONSIMPLE
 		// RestHttpClientApp.listUserTest_JsonSimple();
 
-		// System.out.println("\n====================================\n");
-		// // 1.2 Http Post 방식 Request : CodeHaus lib 사용
+		// GET CODEHAUS
 		// RestHttpClientApp.listUserTest_Codehaus();
 
-		// System.out.println("\n====================================\n");
-		// // 2.1 Http Post 방식 Request : JsonSimple lib 사용
+		// POST JSONSIMPLE
 		// RestHttpClientApp.listUserPostTest_JsonSimple();
 
-		// System.out.println("\n====================================\n");
-		// // 2.1 Http Post 방식 Request : JsonSimple lib 사용
-		RestHttpClientApp.listUserPostTest_Codehaus();
+		// POST CODEHAUS
+		// RestHttpClientApp.listUserPostTest_Codehaus();
+
+		// GET JSONSIMPLE
+//		RestHttpClientApp.getProductTest_JsonSimple();
+
+		// GET CODEHAUS
+//		RestHttpClientApp.getProductTest_Codehaus();
+
+		// POST JSONSIMPLE
+		RestHttpClientApp.addProductTest_JsonSimple();
+
+		// POST CODEHAUS
+//		RestHttpClientApp.addProductTest_Codehaus();
 
 	}
 
-	// ================================================================//
-	// 1.1 Http Protocol GET Request : JsonSimple 3rd party lib 사용
 	public static void getUserTest_JsonSimple() throws Exception {
 
 		// HttpClient : Http Protocol 의 client 추상화
@@ -126,7 +119,6 @@ public class RestHttpClientApp {
 		System.out.println(jsonobj);
 	}
 
-	// 1.2 Http Protocol GET Request : JsonSimple + codehaus 3rd party lib 사용
 	public static void getUserTest_Codehaus() throws Exception {
 
 		// HttpClient : Http Protocol 의 client 추상화
@@ -161,10 +153,7 @@ public class RestHttpClientApp {
 		User user = objectMapper.readValue(jsonobj.toString(), User.class);
 		System.out.println(user);
 	}
-	// ================================================================//
 
-	// ================================================================//
-	// 2.1 Http Protocol POST Request : FromData 전달 / JsonSimple 3rd party lib 사용
 	public static void LoginTest_JsonSimple() throws Exception {
 
 		// HttpClient : Http Protocol 의 client 추상화
@@ -650,7 +639,7 @@ public class RestHttpClientApp {
 	}
 
 	private static void listUserPostTest_Codehaus() throws ClientProtocolException, IOException {
-		
+
 		// HttpClient : Http Protocol 의 client 추상화
 		HttpClient httpClient = new DefaultHttpClient();
 
@@ -689,4 +678,94 @@ public class RestHttpClientApp {
 		System.out.println(map);
 	}
 
+	private static void getProductTest_JsonSimple() throws ClientProtocolException, IOException {
+		HttpClient httpClient = new DefaultHttpClient();
+
+		String url = "http://127.0.0.1:8080/product/json/getProduct/10000";
+
+		HttpGet httpGet = new HttpGet(url);
+		httpGet.setHeader("Accept", "application/json");
+		httpGet.setHeader("Content-Type", "application/json");
+
+		HttpResponse httpResponse = httpClient.execute(httpGet);
+
+		System.out.println(httpResponse);
+		System.out.println();
+
+		HttpEntity httpEntity = httpResponse.getEntity();
+
+		InputStream is = httpEntity.getContent();
+		BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+
+		System.out.println("[ Server 에서 받은 Data 확인 ] ");
+		String serverData = br.readLine();
+		System.out.println(serverData);
+
+		JSONObject jsonobj = (JSONObject) JSONValue.parse(serverData);
+		System.out.println(jsonobj);
+	}
+
+	private static void getProductTest_Codehaus() throws ClientProtocolException, IOException {
+
+		HttpClient httpClient = new DefaultHttpClient();
+
+		String url = "http://127.0.0.1:8080/product/json/getProduct/10005";
+
+		HttpGet httpGet = new HttpGet(url);
+		httpGet.setHeader("Accept", "application/json");
+		httpGet.setHeader("Content-Type", "application/json");
+
+		HttpResponse httpResponse = httpClient.execute(httpGet);
+
+		System.out.println(httpResponse);
+		System.out.println();
+
+		HttpEntity httpEntity = httpResponse.getEntity();
+
+		InputStream is = httpEntity.getContent();
+		BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+
+		JSONObject jsonobj = (JSONObject) JSONValue.parse(br);
+		System.out.println(jsonobj);
+
+		ObjectMapper objectMapper = new ObjectMapper();
+		Product product = objectMapper.readValue(jsonobj.toString(), Product.class);
+
+		System.out.println(product);
+	}
+
+	private static void addProductTest_JsonSimple() throws ClientProtocolException, IOException {
+
+		HttpClient httpClient = new DefaultHttpClient();
+
+		String url = "http://127.0.0.1:8080/product/json/addProduct";
+		HttpPost httpPost = new HttpPost(url);
+		httpPost.setHeader("Accept", "application/json");
+		httpPost.setHeader("Content-Type", "application/json");
+
+		JSONObject json = new JSONObject();
+		json.put("price", "1234");
+		json.put("prodName", "테스트");
+		json.put("prodN0", "1234");
+		HttpEntity httpEntity01 = new StringEntity(json.toString(), "utf-8");
+
+		httpPost.setEntity(httpEntity01);
+		HttpResponse httpResponse = httpClient.execute(httpPost);
+
+		System.out.println(httpResponse);
+		System.out.println();
+
+		HttpEntity httpEntity = httpResponse.getEntity();
+
+		InputStream is = httpEntity.getContent();
+		BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+
+		System.out.println("[ Server 에서 받은 Data 확인 ] ");
+		String serverData = br.readLine();
+		System.out.println(serverData);
+
+		JSONObject jsonobj = (JSONObject) JSONValue.parse(serverData);
+		System.out.println(jsonobj);
+
+	}
 }
